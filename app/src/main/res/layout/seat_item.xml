@@ -31,13 +31,16 @@
 
         <ImageView
             android:id="@+id/genderIconImageView"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
-            android:layout_margin="6dp"
+            android:layout_margin="3dp"
             android:src="@drawable/ic_male"
             android:visibility="gone"
+            android:scaleType="fitCenter"
+            android:background="@drawable/gender_icon_background"
+            android:padding="4dp"
             app:tint="@color/white" />
 
     </RelativeLayout>

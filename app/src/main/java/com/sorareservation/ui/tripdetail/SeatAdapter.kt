@@ -57,7 +57,8 @@ class SeatAdapter(
             binding.seatNumberTextView.setTextColor(textColor)
             
             // Show gender icon for occupied/selected seats
-            if (seat.isOccupied() || seat.isSelected()) {
+            binding.genderIconImageView.visibility = View.GONE
+            if ((seat.isOccupied() || seat.isSelected()) && seat.gender != null) {
                 binding.genderIconImageView.visibility = View.VISIBLE
                 val genderIcon = when (seat.gender) {
                     Gender.MALE -> R.drawable.ic_male
@@ -66,12 +67,10 @@ class SeatAdapter(
                 }
                 if (genderIcon != null) {
                     binding.genderIconImageView.setImageResource(genderIcon)
+                    // Ensure icon is white and visible
+                    binding.genderIconImageView.clearColorFilter()
                     binding.genderIconImageView.setColorFilter(textColor)
-                } else {
-                    binding.genderIconImageView.visibility = View.GONE
                 }
-            } else {
-                binding.genderIconImageView.visibility = View.GONE
             }
             
             // Disable click for occupied seats
