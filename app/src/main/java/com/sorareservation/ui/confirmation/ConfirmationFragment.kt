@@ -66,9 +66,12 @@ class ConfirmationFragment : Fragment() {
         
         val trip = tripId?.let { SeferLab.getTrip(it) }
         
+        val context = context ?: return
+        val activity = activity ?: return
+        
         if (trip == null || seatNumbers.isEmpty()) {
-            Toast.makeText(requireContext(), R.string.invalid_reservation_data, Toast.LENGTH_SHORT).show()
-            requireActivity().finish()
+            Toast.makeText(context, R.string.invalid_reservation_data, Toast.LENGTH_SHORT).show()
+            activity.finish()
             return
         }
         
@@ -78,14 +81,32 @@ class ConfirmationFragment : Fragment() {
         }
         
         if (selectedSeats.isEmpty()) {
-            Toast.makeText(requireContext(), R.string.no_seats_selected_error, Toast.LENGTH_SHORT).show()
-            requireActivity().finish()
+            Toast.makeText(context, R.string.no_seats_selected_error, Toast.LENGTH_SHORT).show()
+            activity.finish()
             return
         }
         
+        setupToolbar()
         setupTripInfo(trip)
         setupSelectedSeats()
         setupConfirmButton(trip)
+    }
+    
+    private fun setupToolbar() {
+        val context = context ?: return
+        val activity = activity ?: return
+        if (activity !is androidx.appcompat.app.AppCompatActivity) return
+        
+        try {
+            activity.setSupportActionBar(binding.toolbar)
+            activity.supportActionBar?.title = getString(R.string.confirm_and_continue)
+            activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+            binding.toolbar.setNavigationOnClickListener {
+                activity.onBackPressedDispatcher.onBackPressed()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
     
     private fun setupTripInfo(trip: Trip) {
@@ -108,9 +129,10 @@ class ConfirmationFragment : Fragment() {
     }
     
     private fun setupSelectedSeats() {
+        val context = context ?: return
         adapter = SelectedSeatAdapter(selectedSeats)
         binding.selectedSeatsRecyclerView.layoutManager = LinearLayoutManager(
-            requireContext(),
+            context,
             LinearLayoutManager.HORIZONTAL,
             false
         )
@@ -124,17 +146,21 @@ class ConfirmationFragment : Fragment() {
     }
     
     private fun confirmReservation(trip: Trip) {
+        val context = context ?: return
+        val activity = activity ?: return
+        if (!isAdded) return
+        
         val reservation = SeferLab.createReservation(trip.id, seatNumbers)
         
         if (reservation != null) {
-            Toast.makeText(requireContext(), R.string.booking_success, Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, R.string.booking_success, Toast.LENGTH_SHORT).show()
             
             // Navigate to reservations list
-            val intent = ReservationListActivity.newIntent(requireContext())
+            val intent = ReservationListActivity.newIntent(context)
             startActivity(intent)
-            requireActivity().finish()
+            activity.finish()
         } else {
-            Toast.makeText(requireContext(), R.string.booking_failed, Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, R.string.booking_failed, Toast.LENGTH_SHORT).show()
         }
     }
     

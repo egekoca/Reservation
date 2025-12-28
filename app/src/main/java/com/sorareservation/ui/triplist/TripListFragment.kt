@@ -5,6 +5,8 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.*
 import android.view.View
+import android.widget.ArrayAdapter
+import android.widget.Filterable
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,6 +29,8 @@ class TripListFragment : Fragment() {
     
     private var adapter: TripAdapter? = null
     private var allTrips: List<Trip> = emptyList()
+    private var citiesAdapter: ArrayAdapter<String>? = null
+    private var citiesList: List<String> = emptyList()
     
     companion object {
         /**
@@ -62,17 +66,20 @@ class TripListFragment : Fragment() {
         
         setupToolbar()
         setupRecyclerView()
+        setupCityAutocomplete()
         setupSearchFilters()
         loadTrips()
     }
     
     private fun setupToolbar() {
+        val context = context ?: return
+        val activity = activity ?: return
+        if (activity !is androidx.appcompat.app.AppCompatActivity) return
+        
         try {
-            val activity = requireActivity()
-            if (activity is androidx.appcompat.app.AppCompatActivity && binding.toolbar != null) {
-                activity.setSupportActionBar(binding.toolbar)
-                activity.supportActionBar?.title = getString(R.string.trip_list_title)
-            }
+            activity.setSupportActionBar(binding.toolbar)
+            activity.supportActionBar?.title = getString(R.string.trip_list_title)
+            // Trip list is the main screen, no back button needed
         } catch (e: Exception) {
             // Toolbar setup failed, continue without toolbar
             e.printStackTrace()
@@ -80,13 +87,82 @@ class TripListFragment : Fragment() {
     }
     
     private fun setupRecyclerView() {
-        binding.tripRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        val context = context ?: return
+        binding.tripRecyclerView.layoutManager = LinearLayoutManager(context)
         
         // Initialize adapter with empty list first
         adapter = TripAdapter(emptyList()) { trip ->
             navigateToTripDetail(trip.id)
         }
         binding.tripRecyclerView.adapter = adapter
+    }
+    
+    private fun setupCityAutocomplete() {
+        val context = context ?: return
+        if (!isAdded) return
+        
+        try {
+            // Load cities from resources
+            val citiesArray = resources.getStringArray(R.array.turkish_cities)
+            citiesList = citiesArray.toList().sorted() // Alphabetically sorted
+            
+            // Create simple ArrayAdapter - it has built-in filtering
+            citiesAdapter = ArrayAdapter(
+                context,
+                android.R.layout.simple_dropdown_item_1line,
+                citiesList
+            )
+            
+            // Set adapter to both AutoCompleteTextViews
+            binding.departureEditText.setAdapter(citiesAdapter)
+            binding.arrivalEditText.setAdapter(citiesAdapter)
+            
+            // Set dropdown height to show 7 items (approximately 40dp per item)
+            val itemHeight = (40 * resources.displayMetrics.density).toInt()
+            binding.departureEditText.dropDownHeight = itemHeight * 7
+            binding.arrivalEditText.dropDownHeight = itemHeight * 7
+            
+            // Set threshold to 1 character (already set in XML, but ensure it's set)
+            binding.departureEditText.threshold = 1
+            binding.arrivalEditText.threshold = 1
+            
+            // Handle item selection - set full city name when clicked
+            binding.departureEditText.setOnItemClickListener { _, _, position, _ ->
+                val selectedCity = citiesAdapter?.getItem(position)
+                if (selectedCity != null) {
+                    binding.departureEditText.setText(selectedCity)
+                    binding.departureEditText.setSelection(selectedCity.length)
+                    // Trigger trip filtering
+                    filterTrips()
+                }
+            }
+            
+            binding.arrivalEditText.setOnItemClickListener { _, _, position, _ ->
+                val selectedCity = citiesAdapter?.getItem(position)
+                if (selectedCity != null) {
+                    binding.arrivalEditText.setText(selectedCity)
+                    binding.arrivalEditText.setSelection(selectedCity.length)
+                    // Trigger trip filtering
+                    filterTrips()
+                }
+            }
+            
+            // Enable dropdown on focus
+            binding.departureEditText.setOnFocusChangeListener { _, hasFocus ->
+                if (hasFocus && binding.departureEditText.text?.isEmpty() == true) {
+                    binding.departureEditText.showDropDown()
+                }
+            }
+            
+            binding.arrivalEditText.setOnFocusChangeListener { _, hasFocus ->
+                if (hasFocus && binding.arrivalEditText.text?.isEmpty() == true) {
+                    binding.arrivalEditText.showDropDown()
+                }
+        }
+            
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
     
     private fun setupSearchFilters() {
@@ -144,7 +220,8 @@ class TripListFragment : Fragment() {
     }
     
     private fun navigateToTripDetail(tripId: java.util.UUID) {
-        val intent = TripDetailActivity.newIntent(requireContext(), tripId)
+        val context = context ?: return
+        val intent = TripDetailActivity.newIntent(context, tripId)
         startActivity(intent)
     }
     
@@ -177,20 +254,24 @@ class TripListFragment : Fragment() {
     }
     
     private fun navigateToReservations() {
-        val intent = ReservationListActivity.newIntent(requireContext())
+        val context = context ?: return
+        val intent = ReservationListActivity.newIntent(context)
         startActivity(intent)
     }
     
     private fun navigateToAdminPanel() {
-        val intent = AdminPanelActivity.newIntent(requireContext())
+        val context = context ?: return
+        val intent = AdminPanelActivity.newIntent(context)
         startActivity(intent)
     }
     
     private fun logout() {
+        val context = context ?: return
+        val activity = activity ?: return
         SeferLab.logout()
-        val intent = LoginActivity.newIntent(requireContext())
+        val intent = LoginActivity.newIntent(context)
         startActivity(intent)
-        requireActivity().finish()
+        activity.finish()
     }
     
     override fun onSaveInstanceState(outState: Bundle) {

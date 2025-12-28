@@ -14,6 +14,10 @@ class RegisterActivity : SingleFragmentActivity() {
         return RegisterFragment.newInstance()
     }
     
+    override fun shouldShowBottomNavigation(): Boolean {
+        return false // Hide bottom navigation on register screen
+    }
+    
     companion object {
         /**
          * Create intent for RegisterActivity

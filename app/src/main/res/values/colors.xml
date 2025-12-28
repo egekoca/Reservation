@@ -35,5 +35,11 @@
     <color name="seat_male">#FF2196F3</color>
     <color name="seat_female">#FFFFC1CB</color>
     <color name="seat_border">#FFBDBDBD</color>
+    
+    <!-- Bottom Navigation Colors -->
+    <color name="bottom_nav_icon_color_base">#FF757575</color>
+    <color name="bottom_nav_text_color_base">#FF757575</color>
+    <color name="bottom_nav_icon_selected">#FFFF6B35</color>
+    <color name="bottom_nav_text_selected">#FFFF6B35</color>
 </resources>
 

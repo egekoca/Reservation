@@ -14,6 +14,10 @@ class LoginActivity : SingleFragmentActivity() {
         return LoginFragment.newInstance()
     }
     
+    override fun shouldShowBottomNavigation(): Boolean {
+        return false // Hide bottom navigation on login screen
+    }
+    
     companion object {
         /**
          * Create intent for LoginActivity

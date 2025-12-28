@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_home"
+        android:icon="@android:drawable/ic_menu_view"
+        android:title="@string/trip_list_title" />
+    
+    <item
+        android:id="@+id/nav_reservations"
+        android:icon="@android:drawable/ic_menu_agenda"
+        android:title="@string/my_reservations" />
+    
+    <item
+        android:id="@+id/nav_admin"
+        android:icon="@android:drawable/ic_menu_manage"
+        android:title="@string/admin_panel"
+        android:visible="false" />
+</menu>
+

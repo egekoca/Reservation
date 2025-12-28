@@ -12,6 +12,7 @@ import com.sorareservation.R
 import com.sorareservation.data.SeferLab
 import com.sorareservation.databinding.FragmentReservationListBinding
 import com.sorareservation.model.Reservation
+import com.sorareservation.ui.triplist.TripListActivity
 
 /**
  * Fragment for displaying user's reservations
@@ -50,23 +51,35 @@ class ReservationListFragment : Fragment() {
     }
     
     private fun setupToolbar() {
-        val activity = requireActivity() as androidx.appcompat.app.AppCompatActivity
-        activity.setSupportActionBar(binding.toolbar)
-        activity.supportActionBar?.title = getString(R.string.reservation_list_title)
-        activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        binding.toolbar.setNavigationOnClickListener {
-            requireActivity().finish()
+        val context = context ?: return
+        val activity = activity ?: return
+        if (activity !is androidx.appcompat.app.AppCompatActivity) return
+        
+        try {
+            activity.setSupportActionBar(binding.toolbar)
+            activity.supportActionBar?.title = getString(R.string.reservation_list_title)
+            activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+            binding.toolbar.setNavigationOnClickListener {
+                // Navigate to Trip List (main menu) instead of just finishing
+                val intent = TripListActivity.newIntent(context)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+                startActivity(intent)
+                activity.finish()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
     
     private fun setupRecyclerView() {
+        val context = context ?: return
         adapter = ReservationAdapter(
             emptyList(),
             onShareClick = { reservation -> shareReservation(reservation) },
             onCancelClick = { reservation -> cancelReservation(reservation) }
         )
         
-        binding.reservationRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.reservationRecyclerView.layoutManager = LinearLayoutManager(context)
         binding.reservationRecyclerView.adapter = adapter
     }
     
@@ -90,6 +103,9 @@ class ReservationListFragment : Fragment() {
     }
     
     private fun shareReservation(reservation: Reservation) {
+        val context = context ?: return
+        if (!isAdded) return
+        
         // Implicit Intent for sharing reservation
         val shareIntent = Intent().apply {
             action = Intent.ACTION_SEND
@@ -100,21 +116,24 @@ class ReservationListFragment : Fragment() {
         
         val chooserIntent = Intent.createChooser(shareIntent, "Share Reservation")
         
-        if (shareIntent.resolveActivity(requireContext().packageManager) != null) {
+        if (shareIntent.resolveActivity(context.packageManager) != null) {
             startActivity(chooserIntent)
         } else {
-            Toast.makeText(requireContext(), R.string.no_share_app, Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, R.string.no_share_app, Toast.LENGTH_SHORT).show()
         }
     }
     
     private fun cancelReservation(reservation: Reservation) {
+        val context = context ?: return
+        if (!isAdded) return
+        
         val success = SeferLab.cancelReservation(reservation.id)
         
         if (success) {
-            Toast.makeText(requireContext(), R.string.reservation_cancelled, Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, R.string.reservation_cancelled, Toast.LENGTH_SHORT).show()
             loadReservations() // Refresh the list
         } else {
-            Toast.makeText(requireContext(), R.string.cancel_reservation_failed, Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, R.string.cancel_reservation_failed, Toast.LENGTH_SHORT).show()
         }
     }
     

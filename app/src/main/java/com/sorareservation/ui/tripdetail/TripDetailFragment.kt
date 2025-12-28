@@ -85,11 +85,29 @@ class TripDetailFragment : Fragment() {
             }
         }
         
+        setupToolbar()
         setupTripInfo()
         setupGenderSelection()
         setupSeatGrid()
         setupBookButton()
         updateSelectedSeatsSummary()
+    }
+    
+    private fun setupToolbar() {
+        val context = context ?: return
+        val activity = activity ?: return
+        if (activity !is androidx.appcompat.app.AppCompatActivity) return
+        
+        try {
+            activity.setSupportActionBar(binding.toolbar)
+            activity.supportActionBar?.title = getString(R.string.trip_detail_title)
+            activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+            binding.toolbar.setNavigationOnClickListener {
+                activity.onBackPressedDispatcher.onBackPressed()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
     
     private fun setupTripInfo() {
