@@ -12,6 +12,16 @@
         android:orientation="vertical"
         android:gravity="center">
 
+        <!-- App Logo -->
+        <ImageView
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:src="@drawable/app_logo"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="24dp"
+            android:contentDescription="@string/app_name"
+            android:scaleType="fitCenter" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -19,7 +29,6 @@
             android:textSize="32sp"
             android:textStyle="bold"
             android:textColor="@color/text_primary"
-            android:layout_marginTop="48dp"
             android:layout_marginBottom="48dp" />
 
         <com.google.android.material.textfield.TextInputLayout

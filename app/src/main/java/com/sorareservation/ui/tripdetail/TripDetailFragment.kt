@@ -32,7 +32,8 @@ class TripDetailFragment : Fragment() {
     private val binding get() = _binding!!
     
     private var trip: Trip? = null
-    private var adapter: SeatAdapter? = null
+    private var leftAdapter: SeatAdapter? = null
+    private var rightAdapter: SeatAdapter? = null
     private val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
     private var selectedGender: Gender? = null  // Currently selected gender for seat selection
     
@@ -122,17 +123,72 @@ class TripDetailFragment : Fragment() {
     
     private fun setupSeatGrid() {
         trip?.let { currentTrip ->
-            adapter = SeatAdapter(currentTrip.seats) { seat ->
+            // Split seats into left (2-seat pairs) and right (single seats)
+            // Layout: [1,2] | aisle | [3] | [4,5] | aisle | [6] | ...
+            val leftSeats = mutableListOf<Seat>()
+            val rightSeats = mutableListOf<Seat>()
+            
+            currentTrip.seats.forEach { seat ->
+                val seatNumber = seat.number
+                val positionInRow = (seatNumber - 1) % 3
+                
+                when (positionInRow) {
+                    0, 1 -> leftSeats.add(seat) // First and second seats in row (left side)
+                    2 -> rightSeats.add(seat)   // Third seat in row (right side)
+                }
+            }
+            
+            // Create adapters for left and right sides
+            val leftAdapter = SeatAdapter(leftSeats) { seat ->
                 handleSeatClick(seat)
             }
             
-            // Use GridLayoutManager with 2 columns for vertical bus layout
-            // Left column: single seats (odd numbers: 1, 3, 5, 7, etc.)
-            // Right column: paired seats (even numbers: 2, 4, 6, 8, etc.)
-            // This creates a vertical bus view similar to real bus layout
-            val gridLayoutManager = GridLayoutManager(requireContext(), 2)
-            binding.seatRecyclerView.layoutManager = gridLayoutManager
-            binding.seatRecyclerView.adapter = adapter
+            val rightAdapter = SeatAdapter(rightSeats) { seat ->
+                handleSeatClick(seat)
+            }
+            
+            // Setup left RecyclerView (2 columns for paired seats)
+            val leftGridLayoutManager = GridLayoutManager(requireContext(), 2)
+            binding.leftSeatRecyclerView.layoutManager = leftGridLayoutManager
+            binding.leftSeatRecyclerView.adapter = leftAdapter
+            
+            // Setup right RecyclerView (1 column for single seats)
+            val rightLinearLayoutManager = androidx.recyclerview.widget.LinearLayoutManager(requireContext())
+            binding.rightSeatRecyclerView.layoutManager = rightLinearLayoutManager
+            binding.rightSeatRecyclerView.adapter = rightAdapter
+            
+            // Store adapters
+            this.leftAdapter = leftAdapter
+            this.rightAdapter = rightAdapter
+        }
+    }
+    
+    /**
+     * Update seat in the appropriate adapter (left or right)
+     */
+    private fun updateSeatInAdapter(seat: Seat) {
+        val seatNumber = seat.number
+        val positionInRow = (seatNumber - 1) % 3
+        
+        when (positionInRow) {
+            0, 1 -> {
+                // Left side seat
+                leftAdapter?.let { adapter ->
+                    val position = adapter.seats.indexOfFirst { it.number == seat.number }
+                    if (position >= 0) {
+                        adapter.notifyItemChanged(position)
+                    }
+                }
+            }
+            2 -> {
+                // Right side seat
+                rightAdapter?.let { adapter ->
+                    val position = adapter.seats.indexOfFirst { it.number == seat.number }
+                    if (position >= 0) {
+                        adapter.notifyItemChanged(position)
+                    }
+                }
+            }
         }
     }
     
@@ -154,7 +210,7 @@ class TripDetailFragment : Fragment() {
                     
                     // Select seat with gender
                     if (currentTrip.selectSeatWithGender(seat.number, selectedGender!!)) {
-                        adapter?.notifyItemChanged(currentTrip.seats.indexOf(seat))
+                        updateSeatInAdapter(seat)
                         updateSelectedSeatsSummary()
                     } else {
                         Toast.makeText(requireContext(), "Seat could not be selected", Toast.LENGTH_SHORT).show()
@@ -167,7 +223,7 @@ class TripDetailFragment : Fragment() {
                         it.status = SeatStatus.AVAILABLE
                         it.gender = null
                     }
-                    adapter?.notifyItemChanged(currentTrip.seats.indexOf(seat))
+                    updateSeatInAdapter(seat)
                     updateSelectedSeatsSummary()
                 }
                 SeatStatus.OCCUPIED -> {

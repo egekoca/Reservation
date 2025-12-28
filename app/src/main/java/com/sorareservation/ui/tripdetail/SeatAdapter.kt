@@ -1,6 +1,7 @@
 package com.sorareservation.ui.tripdetail
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -14,7 +15,7 @@ import com.sorareservation.model.SeatStatus
  * Adapter for displaying seats in a grid layout
  */
 class SeatAdapter(
-    private val seats: List<Seat>,
+    val seats: List<Seat>,
     private val onSeatClick: (Seat) -> Unit
 ) : RecyclerView.Adapter<SeatAdapter.SeatViewHolder>() {
     
@@ -55,9 +56,27 @@ class SeatAdapter(
             
             binding.seatNumberTextView.setTextColor(textColor)
             
+            // Show gender icon for occupied/selected seats
+            if (seat.isOccupied() || seat.isSelected()) {
+                binding.genderIconImageView.visibility = View.VISIBLE
+                val genderIcon = when (seat.gender) {
+                    Gender.MALE -> R.drawable.ic_male
+                    Gender.FEMALE -> R.drawable.ic_female
+                    else -> null
+                }
+                if (genderIcon != null) {
+                    binding.genderIconImageView.setImageResource(genderIcon)
+                    binding.genderIconImageView.setColorFilter(textColor)
+                } else {
+                    binding.genderIconImageView.visibility = View.GONE
+                }
+            } else {
+                binding.genderIconImageView.visibility = View.GONE
+            }
+            
             // Disable click for occupied seats
             binding.root.isEnabled = seat.status != SeatStatus.OCCUPIED
-            binding.root.alpha = if (seat.status == SeatStatus.OCCUPIED) 0.5f else 1.0f
+            binding.root.alpha = if (seat.status == SeatStatus.OCCUPIED) 0.6f else 1.0f
             
             binding.root.setOnClickListener {
                 if (seat.status != SeatStatus.OCCUPIED) {
