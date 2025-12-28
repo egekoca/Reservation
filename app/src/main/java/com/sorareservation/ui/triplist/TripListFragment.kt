@@ -189,6 +189,14 @@ class TripListFragment : Fragment() {
         filterTrips()
     }
     
+    override fun onResume() {
+        super.onResume()
+        // Reload trips when returning to this screen (e.g., after making a reservation)
+        // This ensures available seat counts are updated
+        allTrips = SeferLab.getTrips()
+        filterTrips()
+    }
+    
     private fun filterTrips() {
         if (!isAdded || _binding == null) {
             return

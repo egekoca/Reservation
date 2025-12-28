@@ -85,6 +85,7 @@
     <!-- Error Messages -->
     <string name="trip_not_found">Trip not found</string>
     <string name="seat_selection_failed">Seat could not be selected</string>
+    <string name="seat_already_booked">This seat has already been purchased</string>
     <string name="invalid_reservation_data">Invalid reservation data</string>
     <string name="no_seats_selected_error">No seats selected</string>
     <string name="booking_failed">Booking failed. Please try again.</string>

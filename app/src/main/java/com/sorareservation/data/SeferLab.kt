@@ -53,8 +53,9 @@ object SeferLab {
     }
     
     /**
-     * Initialize mock data for testing
-     * Only called if database is empty
+     * Initialize initial/seed data for testing
+     * Only called if database is empty (first launch)
+     * These data are permanently stored in the database
      */
     private fun initializeMockData() {
         val db = database ?: return
@@ -154,14 +155,48 @@ object SeferLab {
         insertTrip(trip4)
         insertTrip(trip5)
         
-        // Book some seats in trip1 for testing (with gender)
+        // Book some seats in trip1 for testing (with gender) - More seats occupied
+        // Male seats (left side pairs)
         updateSeatStatus(trip1.id, 1, SeatStatus.OCCUPIED, Gender.MALE)
         updateSeatStatus(trip1.id, 2, SeatStatus.OCCUPIED, Gender.MALE)
+        updateSeatStatus(trip1.id, 4, SeatStatus.OCCUPIED, Gender.MALE)
+        updateSeatStatus(trip1.id, 5, SeatStatus.OCCUPIED, Gender.MALE)
+        updateSeatStatus(trip1.id, 7, SeatStatus.OCCUPIED, Gender.MALE)
+        updateSeatStatus(trip1.id, 8, SeatStatus.OCCUPIED, Gender.MALE)
+        // Female seats
         updateSeatStatus(trip1.id, 3, SeatStatus.OCCUPIED, Gender.FEMALE)
+        updateSeatStatus(trip1.id, 6, SeatStatus.OCCUPIED, Gender.FEMALE)
+        updateSeatStatus(trip1.id, 9, SeatStatus.OCCUPIED, Gender.FEMALE)
+        updateSeatStatus(trip1.id, 12, SeatStatus.OCCUPIED, Gender.FEMALE)
+        updateSeatStatus(trip1.id, 13, SeatStatus.OCCUPIED, Gender.FEMALE)
+        updateSeatStatus(trip1.id, 15, SeatStatus.OCCUPIED, Gender.FEMALE)
         
-        // Book some seats in trip2 for testing (with gender)
+        // Book some seats in trip2 for testing (with gender) - More seats occupied
+        // Male seats
+        updateSeatStatus(trip2.id, 1, SeatStatus.OCCUPIED, Gender.MALE)
+        updateSeatStatus(trip2.id, 2, SeatStatus.OCCUPIED, Gender.MALE)
+        updateSeatStatus(trip2.id, 4, SeatStatus.OCCUPIED, Gender.MALE)
+        updateSeatStatus(trip2.id, 5, SeatStatus.OCCUPIED, Gender.MALE)
         updateSeatStatus(trip2.id, 6, SeatStatus.OCCUPIED, Gender.MALE)
+        // Female seats
         updateSeatStatus(trip2.id, 7, SeatStatus.OCCUPIED, Gender.FEMALE)
+        updateSeatStatus(trip2.id, 8, SeatStatus.OCCUPIED, Gender.FEMALE)
+        updateSeatStatus(trip2.id, 9, SeatStatus.OCCUPIED, Gender.FEMALE)
+        updateSeatStatus(trip2.id, 10, SeatStatus.OCCUPIED, Gender.FEMALE)
+        updateSeatStatus(trip2.id, 11, SeatStatus.OCCUPIED, Gender.FEMALE)
+        
+        // Book some seats in trip3 for testing
+        updateSeatStatus(trip3.id, 1, SeatStatus.OCCUPIED, Gender.MALE)
+        updateSeatStatus(trip3.id, 2, SeatStatus.OCCUPIED, Gender.MALE)
+        updateSeatStatus(trip3.id, 3, SeatStatus.OCCUPIED, Gender.FEMALE)
+        updateSeatStatus(trip3.id, 4, SeatStatus.OCCUPIED, Gender.MALE)
+        updateSeatStatus(trip3.id, 5, SeatStatus.OCCUPIED, Gender.MALE)
+        
+        // Book some seats in trip4 for testing
+        updateSeatStatus(trip4.id, 6, SeatStatus.OCCUPIED, Gender.FEMALE)
+        updateSeatStatus(trip4.id, 7, SeatStatus.OCCUPIED, Gender.FEMALE)
+        updateSeatStatus(trip4.id, 8, SeatStatus.OCCUPIED, Gender.FEMALE)
+        updateSeatStatus(trip4.id, 9, SeatStatus.OCCUPIED, Gender.FEMALE)
         
         // Create some pre-made reservations for user1
         val reservation1 = Reservation(

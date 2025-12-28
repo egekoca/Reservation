@@ -269,7 +269,8 @@ class TripDetailFragment : Fragment() {
                     updateSelectedSeatsSummary()
                 }
                 SeatStatus.OCCUPIED -> {
-                    // Do nothing, seat is already booked
+                    // Show error message for already booked seat
+                    Toast.makeText(context, R.string.seat_already_booked, Toast.LENGTH_SHORT).show()
                 }
             }
         }
