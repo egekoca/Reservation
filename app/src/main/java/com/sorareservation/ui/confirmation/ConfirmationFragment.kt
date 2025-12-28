@@ -67,7 +67,7 @@ class ConfirmationFragment : Fragment() {
         val trip = tripId?.let { SeferLab.getTrip(it) }
         
         if (trip == null || seatNumbers.isEmpty()) {
-            Toast.makeText(requireContext(), "Invalid reservation data", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), R.string.invalid_reservation_data, Toast.LENGTH_SHORT).show()
             requireActivity().finish()
             return
         }
@@ -78,7 +78,7 @@ class ConfirmationFragment : Fragment() {
         }
         
         if (selectedSeats.isEmpty()) {
-            Toast.makeText(requireContext(), "No seats selected", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), R.string.no_seats_selected_error, Toast.LENGTH_SHORT).show()
             requireActivity().finish()
             return
         }
@@ -96,6 +96,15 @@ class ConfirmationFragment : Fragment() {
         
         val totalPrice = trip.price * selectedSeats.size
         binding.totalPriceTextView.text = "$totalPrice TL"
+        
+        // Price breakdown
+        val pricePerSeat = trip.price
+        val seatCount = selectedSeats.size
+        if (seatCount > 1) {
+            binding.priceBreakdownTextView.text = "$seatCount seats × $pricePerSeat TL = $totalPrice TL"
+        } else {
+            binding.priceBreakdownTextView.text = "1 seat × $pricePerSeat TL = $totalPrice TL"
+        }
     }
     
     private fun setupSelectedSeats() {
@@ -125,7 +134,7 @@ class ConfirmationFragment : Fragment() {
             startActivity(intent)
             requireActivity().finish()
         } else {
-            Toast.makeText(requireContext(), "Booking failed. Please try again.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), R.string.booking_failed, Toast.LENGTH_SHORT).show()
         }
     }
     

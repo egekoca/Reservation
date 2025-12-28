@@ -51,7 +51,7 @@ class AdminPanelFragment : Fragment() {
         
         // Check if user is admin
         if (!SeferLab.isCurrentUserAdmin()) {
-            Toast.makeText(requireContext(), "Access denied. Admin only.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), R.string.access_denied_admin, Toast.LENGTH_SHORT).show()
             requireActivity().finish()
             return
         }
@@ -122,7 +122,7 @@ class AdminPanelFragment : Fragment() {
         
         if (departureCity.isEmpty() || arrivalCity.isEmpty() || dateStr.isEmpty() || 
             timeStr.isEmpty() || priceStr.isEmpty() || seatsStr.isEmpty()) {
-            Toast.makeText(requireContext(), "Please fill all fields", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), R.string.fill_all_fields, Toast.LENGTH_SHORT).show()
             return
         }
         
@@ -130,12 +130,12 @@ class AdminPanelFragment : Fragment() {
         val seats = seatsStr.toIntOrNull()
         
         if (price == null || price <= 0) {
-            Toast.makeText(requireContext(), "Invalid price", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), R.string.invalid_price, Toast.LENGTH_SHORT).show()
             return
         }
         
         if (seats == null || seats <= 0) {
-            Toast.makeText(requireContext(), "Invalid seat count", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), R.string.invalid_seat_count, Toast.LENGTH_SHORT).show()
             return
         }
         
@@ -173,7 +173,7 @@ class AdminPanelFragment : Fragment() {
             // Refresh trip list
             setupTripList()
         } else {
-            Toast.makeText(requireContext(), "Failed to add trip", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), R.string.trip_add_failed, Toast.LENGTH_SHORT).show()
         }
     }
     
@@ -195,16 +195,18 @@ class AdminPanelFragment : Fragment() {
             Toast.makeText(requireContext(), R.string.trip_deleted, Toast.LENGTH_SHORT).show()
             setupTripList() // Refresh list
         } else {
-            Toast.makeText(requireContext(), "Failed to delete trip", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), R.string.trip_delete_failed, Toast.LENGTH_SHORT).show()
         }
     }
     
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString("departure", binding.departureCityEditText.text.toString())
-        outState.putString("arrival", binding.arrivalCityEditText.text.toString())
-        outState.putString("price", binding.tripPriceEditText.text.toString())
-        outState.putString("seats", binding.totalSeatsEditText.text.toString())
+        _binding?.let {
+            outState.putString("departure", it.departureCityEditText.text.toString())
+            outState.putString("arrival", it.arrivalCityEditText.text.toString())
+            outState.putString("price", it.tripPriceEditText.text.toString())
+            outState.putString("seats", it.totalSeatsEditText.text.toString())
+        }
     }
     
     override fun onDestroyView() {

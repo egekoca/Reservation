@@ -75,16 +75,34 @@
             android:padding="8dp"
             android:clipToPadding="false" />
 
-        <TextView
-            android:id="@+id/emptyTextView"
+        <LinearLayout
+            android:id="@+id/emptyStateLayout"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:text="@string/no_trips"
-            android:textSize="18sp"
-            android:textColor="@color/text_secondary"
+            android:orientation="vertical"
             android:gravity="center"
-            android:visibility="gone" />
+            android:padding="@dimen/spacing_xlarge"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@android:drawable/ic_menu_search"
+                app:tint="@color/text_secondary"
+                android:contentDescription="@string/no_trips"
+                android:alpha="0.5"
+                android:layout_marginBottom="@dimen/spacing_medium" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/no_trips"
+                android:textAppearance="@style/TextAppearance.SoraReservation.H3"
+                android:textColor="@color/text_secondary"
+                android:gravity="center" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

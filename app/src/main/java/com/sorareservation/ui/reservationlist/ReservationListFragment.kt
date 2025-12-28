@@ -103,7 +103,7 @@ class ReservationListFragment : Fragment() {
         if (shareIntent.resolveActivity(requireContext().packageManager) != null) {
             startActivity(chooserIntent)
         } else {
-            Toast.makeText(requireContext(), "No app available to share", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), R.string.no_share_app, Toast.LENGTH_SHORT).show()
         }
     }
     
@@ -114,7 +114,7 @@ class ReservationListFragment : Fragment() {
             Toast.makeText(requireContext(), R.string.reservation_cancelled, Toast.LENGTH_SHORT).show()
             loadReservations() // Refresh the list
         } else {
-            Toast.makeText(requireContext(), "Failed to cancel reservation", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), R.string.cancel_reservation_failed, Toast.LENGTH_SHORT).show()
         }
     }
     

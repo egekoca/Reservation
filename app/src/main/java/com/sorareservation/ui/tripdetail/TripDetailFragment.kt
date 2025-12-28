@@ -70,8 +70,10 @@ class TripDetailFragment : Fragment() {
         trip = tripId?.let { SeferLab.getTrip(it) }
         
         if (trip == null) {
-            Toast.makeText(requireContext(), "Trip not found", Toast.LENGTH_SHORT).show()
-            requireActivity().finish()
+            val context = context ?: return
+            val activity = activity ?: return
+            Toast.makeText(context, R.string.trip_not_found, Toast.LENGTH_SHORT).show()
+            activity.finish()
             return
         }
         
@@ -166,12 +168,13 @@ class TripDetailFragment : Fragment() {
             }
             
             // Setup left RecyclerView (2 columns for paired seats)
-            val leftGridLayoutManager = GridLayoutManager(requireContext(), 2)
+            val context = context ?: return
+            val leftGridLayoutManager = GridLayoutManager(context, 2)
             binding.leftSeatRecyclerView.layoutManager = leftGridLayoutManager
             binding.leftSeatRecyclerView.adapter = leftAdapter
             
             // Setup right RecyclerView (1 column for single seats)
-            val rightLinearLayoutManager = androidx.recyclerview.widget.LinearLayoutManager(requireContext())
+            val rightLinearLayoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
             binding.rightSeatRecyclerView.layoutManager = rightLinearLayoutManager
             binding.rightSeatRecyclerView.adapter = rightAdapter
             
@@ -211,12 +214,15 @@ class TripDetailFragment : Fragment() {
     }
     
     private fun handleSeatClick(seat: Seat) {
+        val context = context ?: return
+        if (!isAdded) return
+        
         trip?.let { currentTrip ->
             when (seat.status) {
                 SeatStatus.AVAILABLE -> {
                     // Check if gender is selected
                     if (selectedGender == null) {
-                        Toast.makeText(requireContext(), R.string.select_gender_first, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, R.string.select_gender_first, Toast.LENGTH_SHORT).show()
                         return
                     }
                     
@@ -231,7 +237,7 @@ class TripDetailFragment : Fragment() {
                         updateSeatInAdapter(seat)
                         updateSelectedSeatsSummary()
                     } else {
-                        Toast.makeText(requireContext(), "Seat could not be selected", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, R.string.seat_selection_failed, Toast.LENGTH_SHORT).show()
                     }
                 }
                 SeatStatus.SELECTED -> {
@@ -271,9 +277,12 @@ class TripDetailFragment : Fragment() {
     }
     
     private fun showGenderWarningDialog() {
-        val dialogBinding = DialogGenderWarningBinding.inflate(LayoutInflater.from(requireContext()))
+        val context = context ?: return
+        if (!isAdded) return
         
-        val dialog = AlertDialog.Builder(requireContext(), R.style.AlertDialogTheme)
+        val dialogBinding = DialogGenderWarningBinding.inflate(LayoutInflater.from(context))
+        
+        val dialog = AlertDialog.Builder(context, R.style.AlertDialogTheme)
             .setView(dialogBinding.root)
             .setCancelable(true)
             .create()
@@ -298,25 +307,28 @@ class TripDetailFragment : Fragment() {
     }
     
     private fun attemptBooking() {
+        val context = context ?: return
+        if (!isAdded) return
+        
         trip?.let { currentTrip ->
             val selectedSeats = currentTrip.getSelectedSeats()
             
             if (selectedSeats.isEmpty()) {
-                Toast.makeText(requireContext(), R.string.no_seats_selected, Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, R.string.no_seats_selected, Toast.LENGTH_SHORT).show()
                 return
             }
             
             // Check if all selected seats have gender assigned
             val seatsWithoutGender = selectedSeats.filter { it.gender == null }
             if (seatsWithoutGender.isNotEmpty()) {
-                Toast.makeText(requireContext(), R.string.select_gender_first, Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, R.string.select_gender_first, Toast.LENGTH_SHORT).show()
                 return
             }
             
             // Navigate to confirmation screen
             val seatNumbers = selectedSeats.map { it.number }
             val intent = ConfirmationActivity.newIntent(
-                requireContext(),
+                context,
                 currentTrip.id,
                 seatNumbers
             )

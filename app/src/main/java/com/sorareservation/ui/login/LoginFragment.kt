@@ -57,11 +57,14 @@ class LoginFragment : Fragment() {
     }
     
     private fun attemptLogin() {
+        val context = context ?: return
+        val activity = activity ?: return
+        
         val email = binding.emailEditText.text.toString().trim()
         val password = binding.passwordEditText.text.toString()
         
         if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(requireContext(), R.string.invalid_credentials, Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, R.string.invalid_credentials, Toast.LENGTH_SHORT).show()
             return
         }
         
@@ -69,23 +72,26 @@ class LoginFragment : Fragment() {
         
         if (user != null) {
             // Login successful, navigate to trip list
-            val intent = TripListActivity.newIntent(requireContext())
+            val intent = TripListActivity.newIntent(context)
             startActivity(intent)
-            requireActivity().finish()
+            activity.finish()
         } else {
-            Toast.makeText(requireContext(), R.string.invalid_credentials, Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, R.string.invalid_credentials, Toast.LENGTH_SHORT).show()
         }
     }
     
     private fun navigateToRegister() {
-        val intent = RegisterActivity.newIntent(requireContext())
+        val context = context ?: return
+        val intent = RegisterActivity.newIntent(context)
         startActivity(intent)
     }
     
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString("email", binding.emailEditText.text.toString())
-        outState.putString("password", binding.passwordEditText.text.toString())
+        _binding?.let {
+            outState.putString("email", it.emailEditText.text.toString())
+            outState.putString("password", it.passwordEditText.text.toString())
+        }
     }
     
     override fun onDestroyView() {

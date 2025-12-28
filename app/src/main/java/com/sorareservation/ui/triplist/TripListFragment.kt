@@ -135,10 +135,10 @@ class TripListFragment : Fragment() {
         
         // Show/hide empty state
         if (filteredTrips.isEmpty()) {
-            binding.emptyTextView.visibility = View.VISIBLE
+            binding.emptyStateLayout.visibility = View.VISIBLE
             binding.tripRecyclerView.visibility = View.GONE
         } else {
-            binding.emptyTextView.visibility = View.GONE
+            binding.emptyStateLayout.visibility = View.GONE
             binding.tripRecyclerView.visibility = View.VISIBLE
         }
     }

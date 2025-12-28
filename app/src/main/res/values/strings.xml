@@ -79,6 +79,26 @@
     <string name="gender_conflict_error">Men can sit next to men, women can sit next to women.</string>
     <string name="no_seats_selected_summary">No seats selected</string>
     
+    <!-- Confirmation Screen -->
+    <string name="confirm_and_continue">Confirm and Continue</string>
+    
+    <!-- Error Messages -->
+    <string name="trip_not_found">Trip not found</string>
+    <string name="seat_selection_failed">Seat could not be selected</string>
+    <string name="invalid_reservation_data">Invalid reservation data</string>
+    <string name="no_seats_selected_error">No seats selected</string>
+    <string name="booking_failed">Booking failed. Please try again.</string>
+    <string name="access_denied_admin">Access denied. Admin only.</string>
+    <string name="fill_all_fields">Please fill all fields</string>
+    <string name="invalid_price">Invalid price</string>
+    <string name="invalid_seat_count">Invalid seat count</string>
+    <string name="trip_add_failed">Failed to add trip</string>
+    <string name="trip_delete_failed">Failed to delete trip</string>
+    <string name="no_share_app">No app available to share</string>
+    <string name="cancel_reservation_failed">Failed to cancel reservation</string>
+    <string name="password_min_length">Password must be at least 6 characters</string>
+    <string name="email_exists">Email already exists</string>
+    
     <!-- Common -->
     <string name="back">Back</string>
     <string name="ok">OK</string>

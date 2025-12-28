@@ -64,12 +64,12 @@ class RegisterFragment : Fragment() {
         val password = binding.passwordEditText.text.toString()
         
         if (fullName.isEmpty() || email.isEmpty() || phone.isEmpty() || password.isEmpty()) {
-            Toast.makeText(requireContext(), "Please fill all fields", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), R.string.fill_all_fields, Toast.LENGTH_SHORT).show()
             return
         }
         
         if (password.length < 6) {
-            Toast.makeText(requireContext(), "Password must be at least 6 characters", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), R.string.password_min_length, Toast.LENGTH_SHORT).show()
             return
         }
         
@@ -82,7 +82,7 @@ class RegisterFragment : Fragment() {
             startActivity(intent)
             requireActivity().finish()
         } else {
-            Toast.makeText(requireContext(), "Email already exists", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), R.string.email_exists, Toast.LENGTH_SHORT).show()
         }
     }
     
@@ -94,10 +94,12 @@ class RegisterFragment : Fragment() {
     
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString("fullName", binding.fullNameEditText.text.toString())
-        outState.putString("email", binding.emailEditText.text.toString())
-        outState.putString("phone", binding.phoneEditText.text.toString())
-        outState.putString("password", binding.passwordEditText.text.toString())
+        _binding?.let {
+            outState.putString("fullName", it.fullNameEditText.text.toString())
+            outState.putString("email", it.emailEditText.text.toString())
+            outState.putString("phone", it.phoneEditText.text.toString())
+            outState.putString("password", it.passwordEditText.text.toString())
+        }
     }
     
     override fun onDestroyView() {
