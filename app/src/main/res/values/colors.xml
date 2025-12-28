@@ -21,6 +21,8 @@
     <color name="seat_available">#FF4CAF50</color>
     <color name="seat_occupied">#FFF44336</color>
     <color name="seat_selected">#FFFF9800</color>
+    <color name="seat_male">#FF2196F3</color>
+    <color name="seat_female">#FFFFC1CB</color>
     <color name="seat_border">#FFBDBDBD</color>
 </resources>
 

@@ -39,6 +39,10 @@
         <activity
             android:name=".ui.admin.AdminPanelActivity"
             android:exported="false" />
+        
+        <activity
+            android:name=".ui.confirmation.ConfirmationActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

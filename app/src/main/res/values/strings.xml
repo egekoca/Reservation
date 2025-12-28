@@ -69,6 +69,16 @@
     <string name="trip_added">Trip added successfully</string>
     <string name="trip_deleted">Trip deleted successfully</string>
     
+    <!-- Gender Selection -->
+    <string name="select_gender">Select Gender</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="male_short">M</string>
+    <string name="female_short">F</string>
+    <string name="select_gender_first">Please select gender first</string>
+    <string name="gender_conflict_error">This seat cannot be selected because an adjacent seat is occupied by a person of opposite gender. Men can sit next to men, women can sit next to women.</string>
+    <string name="no_seats_selected_summary">No seats selected</string>
+    
     <!-- Common -->
     <string name="back">Back</string>
     <string name="ok">OK</string>

@@ -10,11 +10,20 @@ enum class SeatStatus {
 }
 
 /**
+ * Gender enum for seat occupants
+ */
+enum class Gender {
+    MALE,    // Erkek
+    FEMALE   // Kadın
+}
+
+/**
  * Seat model representing a seat in a trip
  */
 data class Seat(
     val number: Int,
-    var status: SeatStatus = SeatStatus.AVAILABLE
+    var status: SeatStatus = SeatStatus.AVAILABLE,
+    var gender: Gender? = null  // Gender of the person in this seat (null if available)
 ) {
     /**
      * Check if seat is available for booking
@@ -30,5 +39,10 @@ data class Seat(
      * Check if seat is occupied/booked
      */
     fun isOccupied(): Boolean = status == SeatStatus.OCCUPIED
+    
+    /**
+     * Get gender of occupant (null if seat is available)
+     */
+    fun getOccupantGender(): Gender? = gender
 }
 

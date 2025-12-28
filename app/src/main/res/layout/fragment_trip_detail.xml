@@ -137,6 +137,41 @@
 
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- Gender Selection -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/select_gender"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_primary"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp" />
+
+        <RadioGroup
+            android:id="@+id/genderRadioGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp">
+
+            <com.google.android.material.radiobutton.MaterialRadioButton
+                android:id="@+id/maleButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/male"
+                android:buttonTint="@color/primary" />
+
+            <com.google.android.material.radiobutton.MaterialRadioButton
+                android:id="@+id/femaleButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/female"
+                android:buttonTint="@color/primary" />
+        </RadioGroup>
+
         <!-- Seat Selection Section -->
         <TextView
             android:layout_width="wrap_content"
@@ -160,19 +195,19 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:layout_marginEnd="16dp">
+                android:layout_marginEnd="8dp">
 
                 <View
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
                     android:background="@color/seat_available"
                     android:layout_marginEnd="4dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/seat_available"
-                    android:textSize="12sp" />
+                    android:text="Boş"
+                    android:textSize="11sp" />
 
             </LinearLayout>
 
@@ -181,19 +216,40 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:layout_marginEnd="16dp">
+                android:layout_marginEnd="8dp">
 
                 <View
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:background="@color/seat_occupied"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:background="@color/seat_male"
                     android:layout_marginEnd="4dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/seat_occupied"
-                    android:textSize="12sp" />
+                    android:text="Erkek"
+                    android:textSize="11sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginEnd="8dp">
+
+                <View
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:background="@color/seat_female"
+                    android:layout_marginEnd="4dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Kadın"
+                    android:textSize="11sp" />
 
             </LinearLayout>
 
@@ -204,16 +260,16 @@
                 android:gravity="center_vertical">
 
                 <View
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
                     android:background="@color/seat_selected"
                     android:layout_marginEnd="4dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/seat_selected"
-                    android:textSize="12sp" />
+                    android:text="Seçili"
+                    android:textSize="11sp" />
 
             </LinearLayout>
 

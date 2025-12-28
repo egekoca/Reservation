@@ -6,6 +6,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.sorareservation.R
 import com.sorareservation.databinding.SeatItemBinding
+import com.sorareservation.model.Gender
 import com.sorareservation.model.Seat
 import com.sorareservation.model.SeatStatus
 
@@ -22,11 +23,25 @@ class SeatAdapter(
         fun bind(seat: Seat) {
             binding.seatNumberTextView.text = seat.number.toString()
             
-            // Set background color based on seat status
+            // Set background color based on seat status and gender
             val backgroundColor = when (seat.status) {
                 SeatStatus.AVAILABLE -> ContextCompat.getColor(binding.root.context, R.color.seat_available)
-                SeatStatus.OCCUPIED -> ContextCompat.getColor(binding.root.context, R.color.seat_occupied)
-                SeatStatus.SELECTED -> ContextCompat.getColor(binding.root.context, R.color.seat_selected)
+                SeatStatus.OCCUPIED -> {
+                    // Show gender color for occupied seats
+                    when (seat.gender) {
+                        Gender.MALE -> ContextCompat.getColor(binding.root.context, R.color.seat_male)
+                        Gender.FEMALE -> ContextCompat.getColor(binding.root.context, R.color.seat_female)
+                        null -> ContextCompat.getColor(binding.root.context, R.color.seat_occupied)
+                    }
+                }
+                SeatStatus.SELECTED -> {
+                    // Show gender color for selected seats
+                    when (seat.gender) {
+                        Gender.MALE -> ContextCompat.getColor(binding.root.context, R.color.seat_male)
+                        Gender.FEMALE -> ContextCompat.getColor(binding.root.context, R.color.seat_female)
+                        null -> ContextCompat.getColor(binding.root.context, R.color.seat_selected)
+                    }
+                }
             }
             
             binding.seatCard.setCardBackgroundColor(backgroundColor)

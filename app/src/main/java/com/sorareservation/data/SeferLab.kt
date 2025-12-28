@@ -111,14 +111,19 @@ object SeferLab {
             price = 250.0
         )
         
-        // Book some seats in trip1 for testing
+        // Book some seats in trip1 for testing (with gender)
         trip1.seats[0].status = SeatStatus.OCCUPIED
+        trip1.seats[0].gender = Gender.MALE
         trip1.seats[1].status = SeatStatus.OCCUPIED
+        trip1.seats[1].gender = Gender.MALE
         trip1.seats[2].status = SeatStatus.OCCUPIED
+        trip1.seats[2].gender = Gender.FEMALE
         
-        // Book some seats in trip2 for testing
+        // Book some seats in trip2 for testing (with gender)
         trip2.seats[5].status = SeatStatus.OCCUPIED
+        trip2.seats[5].gender = Gender.MALE
         trip2.seats[6].status = SeatStatus.OCCUPIED
+        trip2.seats[6].gender = Gender.FEMALE
         
         trips.addAll(listOf(trip1, trip2, trip3, trip4, trip5))
         

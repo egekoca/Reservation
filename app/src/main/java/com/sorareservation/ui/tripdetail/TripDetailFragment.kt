@@ -10,12 +10,16 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.sorareservation.R
 import com.sorareservation.data.SeferLab
 import com.sorareservation.databinding.FragmentTripDetailBinding
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.sorareservation.model.Gender
 import com.sorareservation.model.Seat
 import com.sorareservation.model.SeatStatus
 import com.sorareservation.model.Trip
+import com.sorareservation.ui.confirmation.ConfirmationActivity
 import com.sorareservation.ui.reservationlist.ReservationListActivity
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.UUID
 
 /**
  * Fragment for displaying trip details and seat selection
@@ -28,6 +32,7 @@ class TripDetailFragment : Fragment() {
     private var trip: Trip? = null
     private var adapter: SeatAdapter? = null
     private val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+    private var selectedGender: Gender? = null  // Currently selected gender for seat selection
     
     companion object {
         private const val ARG_TRIP_ID = "trip_id"
@@ -76,6 +81,7 @@ class TripDetailFragment : Fragment() {
         }
         
         setupTripInfo()
+        setupGenderSelection()
         setupSeatGrid()
         setupBookButton()
         updateSelectedSeatsSummary()
@@ -91,14 +97,39 @@ class TripDetailFragment : Fragment() {
         }
     }
     
+    private fun setupGenderSelection() {
+        binding.maleButton.setOnClickListener {
+            selectedGender = Gender.MALE
+            updateGenderButtonStates()
+        }
+        
+        binding.femaleButton.setOnClickListener {
+            selectedGender = Gender.FEMALE
+            updateGenderButtonStates()
+        }
+        
+        // Default to male
+        selectedGender = Gender.MALE
+        updateGenderButtonStates()
+    }
+    
+    private fun updateGenderButtonStates() {
+        binding.maleButton.isChecked = selectedGender == Gender.MALE
+        binding.femaleButton.isChecked = selectedGender == Gender.FEMALE
+    }
+    
     private fun setupSeatGrid() {
         trip?.let { currentTrip ->
             adapter = SeatAdapter(currentTrip.seats) { seat ->
                 handleSeatClick(seat)
             }
             
-            // Use GridLayoutManager with 5 columns (typical bus layout)
-            binding.seatRecyclerView.layoutManager = GridLayoutManager(requireContext(), 5)
+            // Use GridLayoutManager with 2 columns for vertical bus layout
+            // Left column: single seats (odd numbers: 1, 3, 5, 7, etc.)
+            // Right column: paired seats (even numbers: 2, 4, 6, 8, etc.)
+            // This creates a vertical bus view similar to real bus layout
+            val gridLayoutManager = GridLayoutManager(requireContext(), 2)
+            binding.seatRecyclerView.layoutManager = gridLayoutManager
             binding.seatRecyclerView.adapter = adapter
         }
     }
@@ -107,14 +138,37 @@ class TripDetailFragment : Fragment() {
         trip?.let { currentTrip ->
             when (seat.status) {
                 SeatStatus.AVAILABLE -> {
-                    // Select seat
-                    currentTrip.selectSeats(listOf(seat.number))
-                    adapter?.notifyItemChanged(currentTrip.seats.indexOf(seat))
-                    updateSelectedSeatsSummary()
+                    // Check if gender is selected
+                    if (selectedGender == null) {
+                        Toast.makeText(requireContext(), R.string.select_gender_first, Toast.LENGTH_SHORT).show()
+                        return
+                    }
+                    
+                    // Check if seat can be selected with this gender (adjacent seat rule)
+                    if (!currentTrip.canSelectSeatWithGender(seat.number, selectedGender!!)) {
+                        MaterialAlertDialogBuilder(requireContext())
+                            .setTitle(R.string.error)
+                            .setMessage(R.string.gender_conflict_error)
+                            .setPositiveButton(R.string.ok, null)
+                            .show()
+                        return
+                    }
+                    
+                    // Select seat with gender
+                    if (currentTrip.selectSeatWithGender(seat.number, selectedGender!!)) {
+                        adapter?.notifyItemChanged(currentTrip.seats.indexOf(seat))
+                        updateSelectedSeatsSummary()
+                    } else {
+                        Toast.makeText(requireContext(), "Seat could not be selected", Toast.LENGTH_SHORT).show()
+                    }
                 }
                 SeatStatus.SELECTED -> {
                     // Deselect seat
-                    currentTrip.deselectSeats(listOf(seat.number))
+                    val seatToDeselect = currentTrip.seats.find { it.number == seat.number }
+                    seatToDeselect?.let {
+                        it.status = SeatStatus.AVAILABLE
+                        it.gender = null
+                    }
                     adapter?.notifyItemChanged(currentTrip.seats.indexOf(seat))
                     updateSelectedSeatsSummary()
                 }
@@ -130,11 +184,14 @@ class TripDetailFragment : Fragment() {
             val selectedSeats = currentTrip.getSelectedSeats()
             
             if (selectedSeats.isEmpty()) {
-                binding.selectedSeatsTextView.text = "No seats selected"
+                binding.selectedSeatsTextView.text = getString(R.string.no_seats_selected_summary)
                 binding.totalPriceTextView.text = "0 TL"
             } else {
                 val seatNumbers = selectedSeats.map { it.number }.sorted()
-                binding.selectedSeatsTextView.text = seatNumbers.joinToString(", ")
+                val genderText = selectedSeats.firstOrNull()?.gender?.let {
+                    if (it == Gender.MALE) getString(R.string.male_short) else getString(R.string.female_short)
+                } ?: ""
+                binding.selectedSeatsTextView.text = "${seatNumbers.joinToString(", ")} ($genderText)"
                 val totalPrice = currentTrip.price * selectedSeats.size
                 binding.totalPriceTextView.text = "$totalPrice TL"
             }
@@ -156,23 +213,21 @@ class TripDetailFragment : Fragment() {
                 return
             }
             
-            val seatNumbers = selectedSeats.map { it.number }
-            val reservation = SeferLab.createReservation(currentTrip.id, seatNumbers)
-            
-            if (reservation != null) {
-                Toast.makeText(requireContext(), R.string.booking_success, Toast.LENGTH_SHORT).show()
-                
-                // Clear selected seats
-                currentTrip.clearSelectedSeats()
-                adapter?.notifyDataSetChanged()
-                updateSelectedSeatsSummary()
-                
-                // Navigate to reservations list
-                val intent = ReservationListActivity.newIntent(requireContext())
-                startActivity(intent)
-            } else {
-                Toast.makeText(requireContext(), "Booking failed. Please try again.", Toast.LENGTH_SHORT).show()
+            // Check if all selected seats have gender assigned
+            val seatsWithoutGender = selectedSeats.filter { it.gender == null }
+            if (seatsWithoutGender.isNotEmpty()) {
+                Toast.makeText(requireContext(), R.string.select_gender_first, Toast.LENGTH_SHORT).show()
+                return
             }
+            
+            // Navigate to confirmation screen
+            val seatNumbers = selectedSeats.map { it.number }
+            val intent = ConfirmationActivity.newIntent(
+                requireContext(),
+                currentTrip.id,
+                seatNumbers
+            )
+            startActivity(intent)
         }
     }
     
