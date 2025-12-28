@@ -8,19 +8,30 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     
-    <!-- App Colors -->
-    <color name="primary">#FF2196F3</color>
-    <color name="primary_dark">#FF1976D2</color>
-    <color name="accent">#FFFF9800</color>
-    <color name="background">#FFF5F5F5</color>
+    <!-- App Colors - Orange & White Theme -->
+    <color name="primary">#FFFF6B35</color>
+    <color name="primary_dark">#FFE85A1F</color>
+    <color name="primary_light">#FFFF9D7A</color>
+    <color name="accent">#FFFF6B35</color>
+    <color name="background">#FFFFFFFF</color>
     <color name="surface">#FFFFFFFF</color>
     <color name="text_primary">#FF212121</color>
     <color name="text_secondary">#FF757575</color>
     
+    <!-- Dialog Colors -->
+    <color name="dialog_background">#FFFFFFFF</color>
+    <color name="dialog_title_background">#FFFF6B35</color>
+    <color name="dialog_title_text">#FFFFFFFF</color>
+    <color name="dialog_message_text">#FF424242</color>
+    <color name="dialog_button_background">#FFFF6B35</color>
+    <color name="dialog_button_text">#FFFFFFFF</color>
+    
     <!-- Seat Colors -->
     <color name="seat_available">#FF4CAF50</color>
-    <color name="seat_occupied">#FFF44336</color>
-    <color name="seat_selected">#FFFF9800</color>
+    <color name="seat_occupied">#FFE0E0E0</color>
+    <color name="seat_selected">#FFFF6B35</color>
+    <color name="seat_selected_male">#FF2196F3</color>
+    <color name="seat_selected_female">#FFFFC1CB</color>
     <color name="seat_male">#FF2196F3</color>
     <color name="seat_female">#FFFFC1CB</color>
     <color name="seat_border">#FFBDBDBD</color>

@@ -10,7 +10,9 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.sorareservation.R
 import com.sorareservation.data.SeferLab
 import com.sorareservation.databinding.FragmentTripDetailBinding
+import com.sorareservation.databinding.DialogGenderWarningBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import android.app.AlertDialog
 import com.sorareservation.model.Gender
 import com.sorareservation.model.Seat
 import com.sorareservation.model.SeatStatus
@@ -146,11 +148,7 @@ class TripDetailFragment : Fragment() {
                     
                     // Check if seat can be selected with this gender (adjacent seat rule)
                     if (!currentTrip.canSelectSeatWithGender(seat.number, selectedGender!!)) {
-                        MaterialAlertDialogBuilder(requireContext())
-                            .setTitle(R.string.error)
-                            .setMessage(R.string.gender_conflict_error)
-                            .setPositiveButton(R.string.ok, null)
-                            .show()
+                        showGenderWarningDialog()
                         return
                     }
                     
@@ -196,6 +194,27 @@ class TripDetailFragment : Fragment() {
                 binding.totalPriceTextView.text = "$totalPrice TL"
             }
         }
+    }
+    
+    private fun showGenderWarningDialog() {
+        val dialogBinding = DialogGenderWarningBinding.inflate(LayoutInflater.from(requireContext()))
+        
+        val dialog = AlertDialog.Builder(requireContext(), R.style.AlertDialogTheme)
+            .setView(dialogBinding.root)
+            .setCancelable(true)
+            .create()
+        
+        dialogBinding.dialogTitle.text = getString(R.string.error)
+        dialogBinding.dialogMessage.text = getString(R.string.gender_conflict_error)
+        
+        dialogBinding.dialogButton.setOnClickListener {
+            dialog.dismiss()
+        }
+        
+        // Make dialog background transparent and add rounded corners
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.window?.setDimAmount(0.5f)
+        dialog.show()
     }
     
     private fun setupBookButton() {

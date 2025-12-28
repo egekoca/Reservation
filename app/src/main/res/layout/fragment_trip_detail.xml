@@ -341,7 +341,10 @@
             android:layout_height="wrap_content"
             android:text="@string/book_now"
             android:textSize="16sp"
-            android:padding="16dp" />
+            android:textStyle="bold"
+            android:padding="16dp"
+            android:backgroundTint="@color/primary"
+            android:textColor="@color/white" />
 
     </LinearLayout>
 
