@@ -10,7 +10,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.sorareservation.R
 import com.sorareservation.data.SeferLab
 import com.sorareservation.databinding.FragmentConfirmationBinding
+import com.sorareservation.model.Gender
 import com.sorareservation.model.Seat
+import com.sorareservation.model.SeatStatus
 import com.sorareservation.model.Trip
 import com.sorareservation.ui.reservationlist.ReservationListActivity
 import java.text.SimpleDateFormat
@@ -34,15 +36,17 @@ class ConfirmationFragment : Fragment() {
     companion object {
         private const val ARG_TRIP_ID = "trip_id"
         private const val ARG_SEAT_NUMBERS = "seat_numbers"
+        private const val ARG_GENDER = "gender"
         
         /**
          * Create new instance of ConfirmationFragment
          */
-        fun newInstance(tripId: UUID?, seatNumbers: List<Int>): ConfirmationFragment {
+        fun newInstance(tripId: UUID?, seatNumbers: List<Int>, gender: Gender?): ConfirmationFragment {
             val fragment = ConfirmationFragment()
             val args = Bundle().apply {
                 tripId?.let { putSerializable(ARG_TRIP_ID, it) }
                 putIntegerArrayList(ARG_SEAT_NUMBERS, ArrayList(seatNumbers))
+                gender?.let { putInt(ARG_GENDER, it.ordinal) }
             }
             fragment.arguments = args
             return fragment
@@ -63,6 +67,8 @@ class ConfirmationFragment : Fragment() {
         
         tripId = arguments?.getSerializable(ARG_TRIP_ID) as? UUID
         seatNumbers = arguments?.getIntegerArrayList(ARG_SEAT_NUMBERS) ?: arrayListOf()
+        val genderOrdinal = arguments?.getInt(ARG_GENDER, -1)
+        val gender = if (genderOrdinal != null && genderOrdinal >= 0) Gender.values()[genderOrdinal] else null
         
         val trip = tripId?.let { SeferLab.getTrip(it) }
         
@@ -73,6 +79,16 @@ class ConfirmationFragment : Fragment() {
             Toast.makeText(context, R.string.invalid_reservation_data, Toast.LENGTH_SHORT).show()
             activity.finish()
             return
+        }
+        
+        // Mark seats as SELECTED in memory (they are AVAILABLE in database)
+        // This is necessary because SELECTED is a temporary state only in memory
+        seatNumbers.forEach { seatNum ->
+            val seat = trip.seats.find { it.number == seatNum }
+            if (seat != null && seat.isAvailable()) {
+                seat.status = SeatStatus.SELECTED
+                seat.gender = gender
+            }
         }
         
         // Get selected seats with their genders
@@ -150,7 +166,10 @@ class ConfirmationFragment : Fragment() {
         val activity = activity ?: return
         if (!isAdded) return
         
-        val reservation = SeferLab.createReservation(trip.id, seatNumbers)
+        // Get gender from first selected seat (all selected seats should have same gender)
+        val gender = selectedSeats.firstOrNull()?.gender
+        
+        val reservation = SeferLab.createReservation(trip.id, seatNumbers, gender)
         
         if (reservation != null) {
             Toast.makeText(context, R.string.booking_success, Toast.LENGTH_SHORT).show()

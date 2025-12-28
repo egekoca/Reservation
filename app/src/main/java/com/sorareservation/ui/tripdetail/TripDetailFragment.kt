@@ -345,10 +345,12 @@ class TripDetailFragment : Fragment() {
             
             // Navigate to confirmation screen
             val seatNumbers = selectedSeats.map { it.number }
+            val gender = selectedSeats.firstOrNull()?.gender // All selected seats should have same gender
             val intent = ConfirmationActivity.newIntent(
                 context,
                 currentTrip.id,
-                seatNumbers
+                seatNumbers,
+                gender
             )
             startActivity(intent)
         }

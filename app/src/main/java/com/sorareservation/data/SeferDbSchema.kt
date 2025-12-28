@@ -51,6 +51,7 @@ object SeferDbSchema {
             const val TRIP_ID = "trip_id"
             const val SEAT_NUMBER = "seat_number"
             const val STATUS = "status" // 0: AVAILABLE, 1: OCCUPIED, 2: SELECTED
+            const val GENDER = "gender" // NULL: available, 0: MALE, 1: FEMALE
         }
     }
     
