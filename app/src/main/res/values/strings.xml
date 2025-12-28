@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SoraReservation</string>
+    
+    <!-- Login Screen -->
+    <string name="login_title">Login</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="login_button">Login</string>
+    <string name="register_link">Don\'t have an account? Register</string>
+    <string name="invalid_credentials">Invalid email or password</string>
+    
+    <!-- Register Screen -->
+    <string name="register_title">Register</string>
+    <string name="full_name">Full Name</string>
+    <string name="phone">Phone</string>
+    <string name="register_button">Register</string>
+    <string name="login_link">Already have an account? Login</string>
+    <string name="registration_success">Registration successful! Please login.</string>
+    
+    <!-- Trip List Screen -->
+    <string name="trip_list_title">Available Trips</string>
+    <string name="from">From</string>
+    <string name="to">To</string>
+    <string name="date">Date</string>
+    <string name="time">Time</string>
+    <string name="price">Price</string>
+    <string name="available_seats">Available Seats</string>
+    <string name="no_trips">No trips available</string>
+    <string name="logout">Logout</string>
+    <string name="my_reservations">My Reservations</string>
+    <string name="admin_panel">Admin Panel</string>
+    
+    <!-- Trip Detail Screen -->
+    <string name="trip_detail_title">Trip Details</string>
+    <string name="select_seats">Select Seats</string>
+    <string name="selected_seats">Selected Seats</string>
+    <string name="total_price">Total Price</string>
+    <string name="book_now">Book Now</string>
+    <string name="seat_available">Available</string>
+    <string name="seat_occupied">Occupied</string>
+    <string name="seat_selected">Selected</string>
+    <string name="no_seats_selected">Please select at least one seat</string>
+    <string name="booking_success">Booking successful!</string>
+    
+    <!-- Reservation List Screen -->
+    <string name="reservation_list_title">My Reservations</string>
+    <string name="reservation_id">Reservation ID</string>
+    <string name="departure">Departure</string>
+    <string name="arrival">Arrival</string>
+    <string name="seats">Seats</string>
+    <string name="cancel_reservation">Cancel</string>
+    <string name="share_reservation">Share</string>
+    <string name="no_reservations">You have no reservations</string>
+    <string name="reservation_cancelled">Reservation cancelled</string>
+    
+    <!-- Admin Panel Screen -->
+    <string name="admin_panel_title">Admin Panel</string>
+    <string name="add_trip">Add Trip</string>
+    <string name="delete_trip">Delete Trip</string>
+    <string name="departure_city">Departure City</string>
+    <string name="arrival_city">Arrival City</string>
+    <string name="trip_date">Trip Date</string>
+    <string name="trip_time">Trip Time</string>
+    <string name="trip_price">Price (TL)</string>
+    <string name="total_seats">Total Seats</string>
+    <string name="add">Add</string>
+    <string name="delete">Delete</string>
+    <string name="trip_added">Trip added successfully</string>
+    <string name="trip_deleted">Trip deleted successfully</string>
+    
+    <!-- Common -->
+    <string name="back">Back</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="error">Error</string>
+</resources>
+

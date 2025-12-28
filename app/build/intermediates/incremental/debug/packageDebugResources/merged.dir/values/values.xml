@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="accent">#FFFF9800</color>
+    <color name="background">#FFF5F5F5</color>
+    <color name="black">#FF000000</color>
+    <color name="primary">#FF2196F3</color>
+    <color name="primary_dark">#FF1976D2</color>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="seat_available">#FF4CAF50</color>
+    <color name="seat_border">#FFBDBDBD</color>
+    <color name="seat_occupied">#FFF44336</color>
+    <color name="seat_selected">#FFFF9800</color>
+    <color name="surface">#FFFFFFFF</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="text_primary">#FF212121</color>
+    <color name="text_secondary">#FF757575</color>
+    <color name="white">#FFFFFFFF</color>
+    <string name="add">Add</string>
+    <string name="add_trip">Add Trip</string>
+    <string name="admin_panel">Admin Panel</string>
+    <string name="admin_panel_title">Admin Panel</string>
+    <string name="app_name">SoraReservation</string>
+    <string name="arrival">Arrival</string>
+    <string name="arrival_city">Arrival City</string>
+    <string name="available_seats">Available Seats</string>
+    <string name="back">Back</string>
+    <string name="book_now">Book Now</string>
+    <string name="booking_success">Booking successful!</string>
+    <string name="cancel">Cancel</string>
+    <string name="cancel_reservation">Cancel</string>
+    <string name="date">Date</string>
+    <string name="delete">Delete</string>
+    <string name="delete_trip">Delete Trip</string>
+    <string name="departure">Departure</string>
+    <string name="departure_city">Departure City</string>
+    <string name="email">Email</string>
+    <string name="error">Error</string>
+    <string name="from">From</string>
+    <string name="full_name">Full Name</string>
+    <string name="invalid_credentials">Invalid email or password</string>
+    <string name="login_button">Login</string>
+    <string name="login_link">Already have an account? Login</string>
+    <string name="login_title">Login</string>
+    <string name="logout">Logout</string>
+    <string name="my_reservations">My Reservations</string>
+    <string name="no_reservations">You have no reservations</string>
+    <string name="no_seats_selected">Please select at least one seat</string>
+    <string name="no_trips">No trips available</string>
+    <string name="ok">OK</string>
+    <string name="password">Password</string>
+    <string name="phone">Phone</string>
+    <string name="price">Price</string>
+    <string name="register_button">Register</string>
+    <string name="register_link">Don\'t have an account? Register</string>
+    <string name="register_title">Register</string>
+    <string name="registration_success">Registration successful! Please login.</string>
+    <string name="reservation_cancelled">Reservation cancelled</string>
+    <string name="reservation_id">Reservation ID</string>
+    <string name="reservation_list_title">My Reservations</string>
+    <string name="seat_available">Available</string>
+    <string name="seat_occupied">Occupied</string>
+    <string name="seat_selected">Selected</string>
+    <string name="seats">Seats</string>
+    <string name="select_seats">Select Seats</string>
+    <string name="selected_seats">Selected Seats</string>
+    <string name="share_reservation">Share</string>
+    <string name="time">Time</string>
+    <string name="to">To</string>
+    <string name="total_price">Total Price</string>
+    <string name="total_seats">Total Seats</string>
+    <string name="trip_added">Trip added successfully</string>
+    <string name="trip_date">Trip Date</string>
+    <string name="trip_deleted">Trip deleted successfully</string>
+    <string name="trip_detail_title">Trip Details</string>
+    <string name="trip_list_title">Available Trips</string>
+    <string name="trip_price">Price (TL)</string>
+    <string name="trip_time">Trip Time</string>
+    <style name="Theme.SoraReservation" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryVariant">@color/primary_dark</item>
+        <item name="colorOnPrimary">@color/white</item>
+        
+        <item name="colorSecondary">@color/accent</item>
+        <item name="colorSecondaryVariant">@color/accent</item>
+        <item name="colorOnSecondary">@color/black</item>
+        
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        
+        <item name="android:windowBackground">@color/background</item>
+    </style>
+</resources>
