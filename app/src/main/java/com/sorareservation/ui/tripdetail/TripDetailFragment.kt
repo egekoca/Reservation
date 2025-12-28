@@ -102,13 +102,31 @@ class TripDetailFragment : Fragment() {
     
     private fun setupGenderSelection() {
         binding.maleButton.setOnClickListener {
+            val previousGender = selectedGender
             selectedGender = Gender.MALE
             updateGenderButtonStates()
+            
+            // If gender changed, clear selected seats to avoid conflicts
+            if (previousGender != null && previousGender != selectedGender) {
+                trip?.clearSelectedSeats()
+                leftAdapter?.notifyDataSetChanged()
+                rightAdapter?.notifyDataSetChanged()
+                updateSelectedSeatsSummary()
+            }
         }
         
         binding.femaleButton.setOnClickListener {
+            val previousGender = selectedGender
             selectedGender = Gender.FEMALE
             updateGenderButtonStates()
+            
+            // If gender changed, clear selected seats to avoid conflicts
+            if (previousGender != null && previousGender != selectedGender) {
+                trip?.clearSelectedSeats()
+                leftAdapter?.notifyDataSetChanged()
+                rightAdapter?.notifyDataSetChanged()
+                updateSelectedSeatsSummary()
+            }
         }
         
         // Default to male

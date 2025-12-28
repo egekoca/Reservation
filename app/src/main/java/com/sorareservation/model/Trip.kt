@@ -98,22 +98,21 @@ data class Trip(
     /**
      * Check if seat can be selected with given gender
      * Rule: Men can sit next to men, women can sit next to women
+     * This checks both occupied AND selected seats to prevent gender conflicts
      */
     fun canSelectSeatWithGender(seatNumber: Int, gender: Gender): Boolean {
-        // Get adjacent seats (left and right in the same row)
-        // Bus layout: typically 2-2 or 2-1 configuration
-        // For simplicity, we'll check seats that are next to each other numerically
-        // In a real bus: seats 1-2, 3-4, 5-6, etc. might be pairs
-        
         val adjacentSeats = getAdjacentSeats(seatNumber)
         
         for (adjSeatNum in adjacentSeats) {
             val adjSeat = seats.find { it.number == adjSeatNum }
-            if (adjSeat != null && adjSeat.isOccupied()) {
-                val adjGender = adjSeat.gender
-                if (adjGender != null && adjGender != gender) {
-                    // Adjacent seat is occupied by opposite gender
-                    return false
+            if (adjSeat != null) {
+                // Check both occupied and selected seats
+                if (adjSeat.isOccupied() || adjSeat.isSelected()) {
+                    val adjGender = adjSeat.gender
+                    if (adjGender != null && adjGender != gender) {
+                        // Adjacent seat is occupied or selected by opposite gender
+                        return false
+                    }
                 }
             }
         }
@@ -121,24 +120,39 @@ data class Trip(
     }
     
     /**
-     * Get adjacent seat numbers (seats in the same row)
-     * Bus layout: 2-2 configuration (most common)
-     * Seats are arranged in pairs: (1,2), (3,4), (5,6), etc.
+     * Get adjacent seat numbers for 2+1 bus layout
+     * Layout: Each row has 3 seats - 2 on left, 1 on right (separated by aisle)
+     * Example rows: (1,2 | aisle | 3), (4,5 | aisle | 6), (7,8 | aisle | 9), etc.
+     * 
+     * Adjacency rules:
+     * - Seats in left pair (1,2) are adjacent to each other
+     * - Right side seat (3) has no adjacent seats (aisle separates it)
      */
     private fun getAdjacentSeats(seatNumber: Int): List<Int> {
         val adjacent = mutableListOf<Int>()
         
-        // If seat is odd (left side of pair), check seat+1
-        // If seat is even (right side of pair), check seat-1
-        if (seatNumber % 2 == 1) {
-            // Odd number (left side)
-            if (seatNumber < totalSeats) {
-                adjacent.add(seatNumber + 1)
+        // Calculate position in row (0, 1, or 2)
+        // 0 = first seat in left pair
+        // 1 = second seat in left pair  
+        // 2 = right side single seat
+        val positionInRow = (seatNumber - 1) % 3
+        
+        when (positionInRow) {
+            0 -> {
+                // First seat in left pair (e.g., 1, 4, 7) - adjacent to second seat
+                if (seatNumber < totalSeats) {
+                    adjacent.add(seatNumber + 1)
+                }
             }
-        } else {
-            // Even number (right side)
-            if (seatNumber > 1) {
-                adjacent.add(seatNumber - 1)
+            1 -> {
+                // Second seat in left pair (e.g., 2, 5, 8) - adjacent to first seat
+                if (seatNumber > 1) {
+                    adjacent.add(seatNumber - 1)
+                }
+            }
+            2 -> {
+                // Right side single seat (e.g., 3, 6, 9) - no adjacent seats (aisle separates)
+                // No adjacent seats in 2+1 layout
             }
         }
         
@@ -153,6 +167,7 @@ data class Trip(
             val seat = seats.find { it.number == seatNumber }
             if (seat != null && seat.isSelected()) {
                 seat.status = SeatStatus.AVAILABLE
+                seat.gender = null // Clear gender when deselected
             }
         }
     }
