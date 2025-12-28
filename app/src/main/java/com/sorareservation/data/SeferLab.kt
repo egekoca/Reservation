@@ -7,27 +7,47 @@ import com.sorareservation.model.*
 import java.util.*
 
 /**
- * Singleton class for managing trips, users, and reservations
- * Similar to CrimeLab pattern from Android Programming book
- * Now uses SQLite database instead of mock data
+ * Singleton sınıf - Tüm veri işlemlerini yönetir
+ * 
+ * Bu sınıf, Android Programming kitabındaki CrimeLab pattern'ini takip eder.
+ * Tüm veritabanı işlemleri (CRUD) bu sınıf üzerinden yapılır.
+ * 
+ * Singleton Pattern kullanılmasının nedeni:
+ * - Veritabanı bağlantısını tek bir yerde yönetmek
+ * - Kod tekrarını önlemek
+ * - Veri tutarlılığını sağlamak
+ * 
+ * Artık mock data yerine SQLite veritabanı kullanılmaktadır.
  */
 object SeferLab {
     
+    // Application context (memory leak önlemek için application context kullanılır)
     private var context: Context? = null
+    
+    // SQLite veritabanı bağlantısı
     private var database: SQLiteDatabase? = null
     
-    // Current logged in user (stored in memory for session management)
+    // Şu anda giriş yapmış kullanıcı (session yönetimi için memory'de tutulur)
+    // Veritabanında saklanmaz, sadece uygulama çalışırken memory'de tutulur
     private var currentUser: User? = null
     
     /**
-     * Initialize SeferLab with application context
-     * Must be called once in Application.onCreate()
+     * SeferLab'i application context ile başlatır
+     * 
+     * Bu metod, uygulama başlatıldığında SoraReservationApplication.onCreate() içinde
+     * bir kez çağrılmalıdır.
+     * 
+     * @param context Application context (Activity context değil!)
      */
     fun init(context: Context) {
+        // Application context kullan (Activity context memory leak'e neden olabilir)
         this.context = context.applicationContext
+        
+        // Veritabanı helper'ı oluştur ve yazılabilir veritabanı bağlantısı al
         this.database = SeferDbHelper(this.context!!).writableDatabase
         
-        // Check if database is empty, if so load mock data
+        // Veritabanı boş mu kontrol et (ilk açılış kontrolü)
+        // Eğer boşsa, test için başlangıç verileri (seed data) yükle
         if (isDatabaseEmpty()) {
             initializeMockData()
         }
@@ -340,27 +360,43 @@ object SeferLab {
     // ========== User Operations ==========
     
     /**
-     * Login user with email and password
+     * Kullanıcı girişi yapar
+     * 
+     * Email ve şifre ile veritabanında kullanıcıyı arar.
+     * Eşleşen kullanıcı bulunursa, currentUser olarak ayarlanır ve döndürülür.
+     * 
+     * @param email Kullanıcı email adresi
+     * @param password Kullanıcı şifresi
+     * @return Giriş başarılı ise User objesi, değilse null
      */
     fun login(email: String, password: String): User? {
+        // Veritabanında email ve şifre eşleşen kullanıcıyı ara
+        // WHERE email = ? AND password = ? sorgusu
         val cursor = database?.query(
-            SeferDbSchema.UserTable.NAME,
-            null,
-            "${SeferDbSchema.UserTable.Cols.EMAIL} = ? AND ${SeferDbSchema.UserTable.Cols.PASSWORD} = ?",
-            arrayOf(email, password),
-            null,
-            null,
-            null
+            SeferDbSchema.UserTable.NAME, // users tablosu
+            null, // Tüm kolonları seç
+            "${SeferDbSchema.UserTable.Cols.EMAIL} = ? AND ${SeferDbSchema.UserTable.Cols.PASSWORD} = ?", // WHERE koşulu
+            arrayOf(email, password), // WHERE parametreleri
+            null, // GROUP BY yok
+            null, // HAVING yok
+            null  // ORDER BY yok
         )
         
+        // Cursor'ı kullan (use bloğu otomatik olarak kapatır)
         cursor?.use {
+            // İlk kayda git (eğer varsa)
             if (it.moveToFirst()) {
+                // CursorWrapper kullanarak Cursor'dan User objesine dönüşüm yap
                 val wrapper = UserCursorWrapper(it)
                 val user = wrapper.getUser()
+                
+                // Giriş yapan kullanıcıyı currentUser olarak ayarla
+                // Bu, session yönetimi için önemlidir
                 currentUser = user
                 return user
             }
         }
+        // Kullanıcı bulunamadı (email veya şifre yanlış)
         return null
     }
     

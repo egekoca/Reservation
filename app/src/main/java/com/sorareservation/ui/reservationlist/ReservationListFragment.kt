@@ -102,23 +102,40 @@ class ReservationListFragment : Fragment() {
         }
     }
     
+    /**
+     * Rezervasyonu başka uygulamalarla paylaşır (Implicit Intent kullanarak)
+     * 
+     * Bu metod, Android'in standart paylaşım sistemini kullanır.
+     * Sistem, ACTION_SEND action'ını destekleyen tüm uygulamaları bulur
+     * (WhatsApp, Gmail, SMS, Telegram, vb.) ve kullanıcıya seçenekler sunar.
+     * 
+     * @param reservation Paylaşılacak rezervasyon
+     */
     private fun shareReservation(reservation: Reservation) {
-        val context = context ?: return
-        if (!isAdded) return
+        val context = context ?: return // Context null kontrolü
+        if (!isAdded) return // Fragment hala ekrana ekli mi kontrol et
         
-        // Implicit Intent for sharing reservation
+        // Implicit Intent oluştur (örtülü intent)
+        // ACTION_SEND: "Paylaş" eylemi
+        // type = "text/plain": Metin paylaşımı
         val shareIntent = Intent().apply {
-            action = Intent.ACTION_SEND
-            type = "text/plain"
-            putExtra(Intent.EXTRA_SUBJECT, "My Bus Reservation")
-            putExtra(Intent.EXTRA_TEXT, reservation.getSummary())
+            action = Intent.ACTION_SEND // Paylaş eylemi
+            type = "text/plain" // Paylaşılacak veri tipi: metin
+            putExtra(Intent.EXTRA_SUBJECT, "My Bus Reservation") // Paylaşım konusu
+            putExtra(Intent.EXTRA_TEXT, reservation.getSummary()) // Paylaşılacak metin (rezervasyon detayları)
         }
         
+        // Chooser dialog oluştur
+        // Kullanıcıya hangi uygulamayla paylaşmak istediğini sorar
         val chooserIntent = Intent.createChooser(shareIntent, "Share Reservation")
         
+        // Sistemde paylaşma yapabilecek bir uygulama var mı kontrol et
+        // resolveActivity() null dönerse, hiçbir uygulama bu action'ı desteklemiyor demektir
         if (shareIntent.resolveActivity(context.packageManager) != null) {
+            // Uygulama bulundu, chooser dialog'u göster
             startActivity(chooserIntent)
         } else {
+            // Paylaşma yapabilecek uygulama yok, kullanıcıya bilgi ver
             Toast.makeText(context, R.string.no_share_app, Toast.LENGTH_SHORT).show()
         }
     }

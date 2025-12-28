@@ -231,45 +231,64 @@ class TripDetailFragment : Fragment() {
         }
     }
     
+    /**
+     * Koltuk tıklama olayını yönetir
+     * 
+     * Kullanıcı bir koltuğa tıkladığında:
+     * - AVAILABLE ise: Seçim yapılır (cinsiyet kontrolü ile)
+     * - SELECTED ise: Seçim kaldırılır
+     * - OCCUPIED ise: Hata mesajı gösterilir
+     * 
+     * @param seat Tıklanan koltuk
+     */
     private fun handleSeatClick(seat: Seat) {
-        val context = context ?: return
-        if (!isAdded) return
+        val context = context ?: return // Context null kontrolü
+        if (!isAdded) return // Fragment hala ekrana ekli mi kontrol et
         
         trip?.let { currentTrip ->
             when (seat.status) {
                 SeatStatus.AVAILABLE -> {
-                    // Check if gender is selected
+                    // Koltuk müsait, seçim yapılabilir
+                    
+                    // Önce cinsiyet seçilmiş mi kontrol et
                     if (selectedGender == null) {
                         Toast.makeText(context, R.string.select_gender_first, Toast.LENGTH_SHORT).show()
                         return
                     }
                     
-                    // Check if seat can be selected with this gender (adjacent seat rule)
+                    // Cinsiyet bazlı seçim kontrolü yap
+                    // Komşu koltuklarda karşı cinsiyet var mı?
                     if (!currentTrip.canSelectSeatWithGender(seat.number, selectedGender!!)) {
+                        // Komşu koltukta karşı cinsiyet var, uyarı dialog göster
                         showGenderWarningDialog()
                         return
                     }
                     
-                    // Select seat with gender
+                    // Seçim yapılabilir, koltuk seçili olarak işaretle
                     if (currentTrip.selectSeatWithGender(seat.number, selectedGender!!)) {
+                        // Seçim başarılı, adapter'ı güncelle (UI'da görünüm değişsin)
                         updateSeatInAdapter(seat)
+                        // Seçili koltuklar özetini güncelle (alt kısımdaki text)
                         updateSelectedSeatsSummary()
                     } else {
+                        // Seçim başarısız (beklenmeyen hata)
                         Toast.makeText(context, R.string.seat_selection_failed, Toast.LENGTH_SHORT).show()
                     }
                 }
                 SeatStatus.SELECTED -> {
-                    // Deselect seat
+                    // Koltuk zaten seçili, seçimi kaldır
                     val seatToDeselect = currentTrip.seats.find { it.number == seat.number }
                     seatToDeselect?.let {
-                        it.status = SeatStatus.AVAILABLE
-                        it.gender = null
+                        it.status = SeatStatus.AVAILABLE // Müsait yap
+                        it.gender = null // Cinsiyet bilgisini temizle
                     }
+                    // UI'ı güncelle
                     updateSeatInAdapter(seat)
                     updateSelectedSeatsSummary()
                 }
                 SeatStatus.OCCUPIED -> {
-                    // Show error message for already booked seat
+                    // Koltuk dolu (başka biri tarafından satın alınmış)
+                    // Kullanıcıya hata mesajı göster
                     Toast.makeText(context, R.string.seat_already_booked, Toast.LENGTH_SHORT).show()
                 }
             }

@@ -4,21 +4,33 @@ import java.util.Date
 import java.util.UUID
 
 /**
- * Trip model representing a bus trip
+ * Otobüs seferi modeli
+ * 
+ * Bu data class, bir otobüs seferinin tüm bilgilerini tutar:
+ * - Sefer bilgileri (kalkış, varış, tarih, saat, fiyat)
+ * - Koltuk listesi (her koltuk Seat objesi olarak)
+ * - Koltuk yönetimi metodları (seçim, iptal, rezervasyon)
  */
 data class Trip(
-    val id: UUID = UUID.randomUUID(),
-    val departureCity: String,
-    val arrivalCity: String,
-    val departureDate: Date,
-    val departureTime: String, // Format: "HH:mm"
-    val price: Double,
-    val totalSeats: Int = 45, // Default bus has 45 seats
-    val seats: MutableList<Seat> = mutableListOf()
+    val id: UUID = UUID.randomUUID(), // Benzersiz sefer ID'si
+    val departureCity: String, // Kalkış şehri
+    val arrivalCity: String, // Varış şehri
+    val departureDate: Date, // Kalkış tarihi
+    val departureTime: String, // Kalkış saati (Format: "HH:mm")
+    val price: Double, // Sefer fiyatı (TL)
+    val totalSeats: Int = 45, // Toplam koltuk sayısı (varsayılan: 45)
+    val seats: MutableList<Seat> = mutableListOf() // Koltuk listesi
 ) {
+    /**
+     * Constructor sonrası çalışan init bloğu
+     * 
+     * Eğer koltuk listesi boşsa, totalSeats kadar koltuk oluşturur.
+     * Her koltuk başlangıçta AVAILABLE (müsait) durumundadır.
+     */
     init {
-        // Initialize seats if empty
+        // Eğer koltuk listesi boşsa, koltukları oluştur
         if (seats.isEmpty()) {
+            // 1'den totalSeats'e kadar koltuk numaraları oluştur
             for (i in 1..totalSeats) {
                 seats.add(Seat(number = i, status = SeatStatus.AVAILABLE))
             }
@@ -96,26 +108,38 @@ data class Trip(
     }
     
     /**
-     * Check if seat can be selected with given gender
-     * Rule: Men can sit next to men, women can sit next to women
-     * This checks both occupied AND selected seats to prevent gender conflicts
+     * Koltuk seçilebilir mi kontrol eder (cinsiyet bazlı)
+     * 
+     * Kural: Erkekler sadece erkeklerin yanına, kadınlar sadece kadınların yanına oturabilir.
+     * 
+     * Bu metod, hem OCCUPIED (dolu) hem de SELECTED (seçili) koltukları kontrol eder.
+     * Böylece seçim sırasında bile cinsiyet çakışması önlenir.
+     * 
+     * @param seatNumber Seçilmek istenen koltuk numarası
+     * @param gender Seçilecek kişinin cinsiyeti
+     * @return true ise seçilebilir, false ise komşu koltukta karşı cinsiyet var
      */
     fun canSelectSeatWithGender(seatNumber: Int, gender: Gender): Boolean {
+        // Komşu koltuk numaralarını al (2+1 düzenine göre)
         val adjacentSeats = getAdjacentSeats(seatNumber)
         
+        // Her komşu koltuk için kontrol yap
         for (adjSeatNum in adjacentSeats) {
             val adjSeat = seats.find { it.number == adjSeatNum }
             if (adjSeat != null) {
-                // Check both occupied and selected seats
+                // Hem dolu (OCCUPIED) hem seçili (SELECTED) koltukları kontrol et
+                // SELECTED kontrolü önemli: Kullanıcı seçim yaparken bile çakışma olmamalı
                 if (adjSeat.isOccupied() || adjSeat.isSelected()) {
                     val adjGender = adjSeat.gender
+                    // Eğer komşu koltukta karşı cinsiyet varsa, seçim yapılamaz
                     if (adjGender != null && adjGender != gender) {
-                        // Adjacent seat is occupied or selected by opposite gender
+                        // Komşu koltukta karşı cinsiyet var, seçim yapılamaz
                         return false
                     }
                 }
             }
         }
+        // Tüm komşu koltuklar uygun, seçim yapılabilir
         return true
     }
     
