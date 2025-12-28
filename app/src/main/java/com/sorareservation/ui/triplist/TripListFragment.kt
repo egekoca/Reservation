@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.*
+import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -66,26 +67,40 @@ class TripListFragment : Fragment() {
     }
     
     private fun setupToolbar() {
-        val activity = requireActivity() as androidx.appcompat.app.AppCompatActivity
-        activity.setSupportActionBar(binding.toolbar)
-        activity.supportActionBar?.title = getString(R.string.trip_list_title)
+        try {
+            val activity = requireActivity()
+            if (activity is androidx.appcompat.app.AppCompatActivity && binding.toolbar != null) {
+                activity.setSupportActionBar(binding.toolbar)
+                activity.supportActionBar?.title = getString(R.string.trip_list_title)
+            }
+        } catch (e: Exception) {
+            // Toolbar setup failed, continue without toolbar
+            e.printStackTrace()
+        }
     }
     
     private fun setupRecyclerView() {
+        binding.tripRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        
+        // Initialize adapter with empty list first
         adapter = TripAdapter(emptyList()) { trip ->
             navigateToTripDetail(trip.id)
         }
-        
-        binding.tripRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.tripRecyclerView.adapter = adapter
     }
     
     private fun setupSearchFilters() {
+        if (!isAdded || _binding == null) {
+            return
+        }
+        
         val textWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
-                filterTrips()
+                if (isAdded && _binding != null) {
+                    filterTrips()
+                }
             }
         }
         
@@ -99,6 +114,10 @@ class TripListFragment : Fragment() {
     }
     
     private fun filterTrips() {
+        if (!isAdded || _binding == null) {
+            return
+        }
+        
         val departure = binding.departureEditText.text.toString().trim()
         val arrival = binding.arrivalEditText.text.toString().trim()
         
@@ -111,22 +130,16 @@ class TripListFragment : Fragment() {
             )
         }
         
-        adapter?.let { adapter ->
-            // Update adapter with filtered trips
-            val newAdapter = TripAdapter(filteredTrips) { trip ->
-                navigateToTripDetail(trip.id)
-            }
-            binding.tripRecyclerView.adapter = newAdapter
-            this.adapter = newAdapter
-        }
+        // Update adapter with filtered trips
+        adapter?.updateData(filteredTrips)
         
         // Show/hide empty state
         if (filteredTrips.isEmpty()) {
-            binding.emptyTextView.visibility = android.view.View.VISIBLE
-            binding.tripRecyclerView.visibility = android.view.View.GONE
+            binding.emptyTextView.visibility = View.VISIBLE
+            binding.tripRecyclerView.visibility = View.GONE
         } else {
-            binding.emptyTextView.visibility = android.view.View.GONE
-            binding.tripRecyclerView.visibility = android.view.View.VISIBLE
+            binding.emptyTextView.visibility = View.GONE
+            binding.tripRecyclerView.visibility = View.VISIBLE
         }
     }
     
@@ -182,8 +195,10 @@ class TripListFragment : Fragment() {
     
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString("departure", binding.departureEditText.text.toString())
-        outState.putString("arrival", binding.arrivalEditText.text.toString())
+        _binding?.let {
+            outState.putString("departure", it.departureEditText.text.toString())
+            outState.putString("arrival", it.arrivalEditText.text.toString())
+        }
     }
     
     override fun onDestroyView() {
@@ -191,4 +206,3 @@ class TripListFragment : Fragment() {
         _binding = null
     }
 }
-

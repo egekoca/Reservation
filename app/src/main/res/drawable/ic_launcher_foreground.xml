@@ -4,7 +4,7 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    
+
     <!-- Simple bus icon representation -->
     <path
         android:fillColor="#FFFFFF"
@@ -12,18 +12,13 @@
     <path
         android:fillColor="#FFFFFF"
         android:pathData="M25,50 L25,60 L83,60 L83,50 L25,50 Z"/>
-    <circle
+    <path
         android:fillColor="#FFFFFF"
-        android:cx="35"
-        android:cy="80"
-        android:r="8"/>
-    <circle
+        android:pathData="M27,80 a 8,8 0 1,0 16,0 a 8,8 0 1,0 -16,0"/>
+    <path
         android:fillColor="#FFFFFF"
-        android:cx="73"
-        android:cy="80"
-        android:r="8"/>
+        android:pathData="M65,80 a 8,8 0 1,0 16,0 a 8,8 0 1,0 -16,0"/>
     <path
         android:fillColor="#FFFFFF"
         android:pathData="M30,45 L30,50 L78,50 L78,45 L30,45 Z"/>
 </vector>
-
